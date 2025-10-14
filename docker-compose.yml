@@ -1,0 +1,40 @@
+services:
+  postgres_db:
+    image: postgres:18
+    environment: 
+      - POSTGRES_DB=${POSTGRES_DATABASE_NAME}
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - task_manager
+
+  backend:
+    build: ./backend
+    depends_on:
+      - postgres_db
+    environment:
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    networks:
+      - task_manager
+    volumes:
+      - ./backend:/app
+
+
+networks:
+  task_manager:
+    driver: bridge
+
+volumes:
+  postgres_data:
