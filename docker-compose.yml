@@ -6,20 +6,21 @@ services:
       - POSTGRES_USER=${POSTGRES_USERNAME}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME} -d ${POSTGRES_DATABASE_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
     restart: always
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     networks:
       - task_manager
 
   backend:
     build: ./backend
     depends_on:
-      - postgres_db
+      postgres_db:
+        condition: service_healthy
     environment:
       - PYTHONUNBUFFERED=1
     env_file:
@@ -29,6 +30,7 @@ services:
     networks:
       - task_manager
     volumes:
+    # development only
       - ./backend:/app
 
 

@@ -1,44 +1,101 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import (
+    TokenObtainLifetimeSerializer,
+    TokenRefreshLifetimeSerializer,
+)
+from rest_framework_simplejwt.views import TokenViewBase
 
-import logging
-from .models import User
+from .serializers import UserSerializer
+from utils import logger
+
 
 # Create your views here.
-class RegisterUser(APIView):
-	permission_classes = [AllowAny]
+class UserView(APIView):
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [AllowAny()]
+        return [IsAuthenticated()]
 
-	def post(self, request):
-		try:
-			username = request.data.get('username', '')
-			password = request.data.get('password')
-			email = request.data.get('email')
+    def post(self, request):
+        try:
+            serializer = UserSerializer(data=request.data)
 
-			if not email or not password:
-				return Response({'error': "No email or password provided"}, status=400)
+            if serializer.is_valid():
+                serializer.save()
 
-			if User.objects.filter(email=email).exists():
-				return Response({'error': "Email already exists"}, status=400)
+                logger.info(f"User created succesfully: {serializer.data}")
+                return Response(serializer.data, status=201)
+            logger.warning(f"Error creating user: {serializer.errors}")
+            return Response(serializer.errors, status=400)
+        except Exception as e:
+            logger.error(f"Error creating user: {str(e)}")
+            return Response({"error": str(e)}, status=500)
 
-			user = User.objects.create_user(
-				username=username,
-				password=password,
-				email=email,
-			)
+    def patch(self, request):
+        try:
+            user = request.user
 
-			refresh = RefreshToken.for_user(user)
+            serializer = UserSerializer(
+                instance=user,
+                data=request.data,
+                partial=True,
+            )
 
-			logging.info(f"User {username} created succesfully")
-			return Response({
-				'message': 'User Created succesfully',
-				'tokens': {
-					'refresh': str(refresh),
-					'access': str(refresh.access_token),
-				}
-			}, status=201)
-		except Exception as e:
-			logging.error(f"Error creating user: {str(e)}")
-			return Response({'error': str(e)}, status=500)
+            if serializer.is_valid():
+                serializer.save()
+                logger.info(f"User updated succesfully: {serializer.data}")
+                return Response(serializer.data, status=200)
+
+            logger.warning(f"Error updating user: {serializer.errors}")
+            return Response(serializer.errors, status=400)
+        except Exception as e:
+            logger.error(f"Error updating user: {e}")
+            return Response(f"Internal server error: {e}", status=500)
+
+    def get(self, request):
+        try:
+            user = request.user
+
+            serializer = UserSerializer(
+                instance=user,
+            )
+            return Response(serializer.data, status=200)
+        except Exception as e:
+            return Response(f"Internal server error: {e}", status=500)
+
+
+class LogoutUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get('refresh', '')
+
+            if not refresh_token:
+                return Response("No refresh token provided", status=400)
+
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response("Successfully logged out", status=200)
+        except Exception as e:
+            return Response(f"Internal server error: {e}", status=500)
+
+
+class TokenObtainPairView(TokenViewBase):
+    """
+    Returns access token, refresh token and expiry time
+    """
+
+    serializer_class = TokenObtainLifetimeSerializer
+
+
+class TokenRefreshView(TokenViewBase):
+    """
+    Renews token adn returns access token, refresh token and expiry time
+    """
+
+    serializer_class = TokenRefreshLifetimeSerializer

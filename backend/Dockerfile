@@ -4,10 +4,13 @@ WORKDIR /app
 
 RUN apt-get update
 
-COPY . .
+# only for production
+# COPY . .
 
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 
+COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
 CMD [ "sh", "entrypoint.sh" ]
