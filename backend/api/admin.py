@@ -21,6 +21,6 @@ class UsersTaskAdmin(admin.ModelAdmin):
         if not users:
             return "No users"
 
-        return ", ".join([users.username for user in users])
+        return ", ".join([user.username for user in users])
 
     get_usernames.short_description = "Users"

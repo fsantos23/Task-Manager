@@ -25,7 +25,7 @@ class TaskBase(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ["-create_at"]
+        ordering = ["-created_at"]
 
     def __str__(self):
         return self.title
@@ -45,6 +45,6 @@ class UserTask(TaskBase):
     def __str__(self):
         user_count = self.users.count()
         if user_count == 1:
-            return f"{self.users.first().user} - {self.title}"
+            return f"{self.users.first().username} - {self.title}"
         else:
             return f"{user_count} users - {self.title}"

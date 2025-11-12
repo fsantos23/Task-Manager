@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import UserTask
-from authentication.serializers import UserSerializer
 from authentication.models import CreateUser
 
 

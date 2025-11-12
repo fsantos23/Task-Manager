@@ -37,7 +37,7 @@ class TasksListView(APIView):
             serialized = TaskSerializer(data=request.data)
             if serialized.is_valid():
                 serialized.save()
-                logger.info(f"Task created succesfully: {serialized.data}")
+                logger.info(f"Task created successfully: {serialized.data}")
                 return Response(serialized.data, status=201)
 
             logger.warning(f"Error creating task: {serialized.errors}")
@@ -95,5 +95,5 @@ class SingleTaskListView(APIView):
             logger.warning(f"No task to delete: {task_id}")
             return Response("No task to delete", status=400)
         except Exception as e:
-            logger.error(f"Error deleting user: {e}")
+            logger.error(f"Error deleting task: {e}")
             return Response(f"Internal server error: {e}", status=500)
