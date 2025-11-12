@@ -35,6 +35,7 @@ class UserTask(TaskBase):
 
     users = models.ManyToManyField(
         CreateUser,
+        related_name="tasks"
     )
 
     class Meta:
