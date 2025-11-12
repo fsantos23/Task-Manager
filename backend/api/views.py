@@ -52,25 +52,23 @@ class SingleTaskListView(APIView):
 
     def get(self, request, task_id):
         try:
+            task = UserTask.objects.get(id=task_id)
 
             serializer = TaskSerializer(
-                instance=task_id,
+                instance=task,
             )
-
-            if serializer.is_valid():
-                logger.info(f"Got single task successfully")
-                return Response(serializer.data, status=200)
-            logger.warning(f"Error getting the task: {serializer.errors}")
-            return Response(serializer.errors, status=400)
+            logger.info("Got single task successfully")
+            return Response(serializer.data, status=200)
         except Exception as e:
             logger.error(f"Error getting task {e}")
             return Response(f"Internal Server Error: {e}", status=500)
 
     def patch(self, request, task_id):
         try:
+            task = UserTask.objects.get(id=task_id)
 
             serializer = TaskSerializer(
-                instance=task_id,
+                instance=task,
                 data=request.data,
                 partial=True,
             )
