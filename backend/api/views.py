@@ -91,7 +91,7 @@ class SingleTaskListView(APIView):
             if task:
                 task.delete()
                 logger.info("Successfully deleted task")
-                return Response(f"Deleted task {task_id}", status=204)
+                return Response(status=204)
             logger.warning(f"No task to delete: {task_id}")
             return Response("No task to delete", status=400)
         except Exception as e:
