@@ -57,7 +57,7 @@ cd your-project
 
 2. Set up environment variables
 ```bash
-cp .env.example .env
+cp env-sample .env
 # Edit .env with your configuration
 ```
 
@@ -169,8 +169,10 @@ The API is built with Django REST Framework and uses JWT authentication. All tas
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
 | POST | `/authentication/user` | Register a new user | No |
+| GET | `/authentication/user` | Get current user information | Yes |
+| PATCH | `/authentication/user` | Update current user information | Yes |
 | POST | `/authentication/login` | Login and obtain JWT tokens | No |
-| POST | `/authentication/logout` | Logout user | Yes |
+| POST | `/authentication/logout` | Logout user (blacklist refresh token) | Yes |
 | POST | `/authentication/token/refresh` | Refresh access token | Yes |
 | POST | `/authentication/token/verify` | Verify token validity | Yes |
 
@@ -181,6 +183,28 @@ POST /authentication/user
   "username": "newuser",
   "email": "user@example.com",
   "password": "securepassword123"
+}
+```
+
+**Example - Get Current User:**
+```json
+GET /authentication/user
+Headers: Authorization: Bearer <access_token>
+
+Response:
+{
+  "id": 1,
+  "username": "newuser",
+  "email": "user@example.com"
+}
+```
+
+**Example - Update User:**
+```json
+PATCH /authentication/user
+Headers: Authorization: Bearer <access_token>
+{
+  "email": "newemail@example.com"
 }
 ```
 
@@ -197,6 +221,18 @@ Response:
   "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
   "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc..."
 }
+```
+
+**Example - Logout:**
+```json
+POST /authentication/logout
+Headers: Authorization: Bearer <access_token>
+{
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+}
+
+Response:
+"Successfully logged out"
 ```
 
 ### Task Management Endpoints
@@ -246,11 +282,13 @@ Headers: Authorization: Bearer <access_token>
 
 ### Authentication Flow
 
-1. **Register** a new user at `/authentication/user`
-2. **Login** at `/authentication/login` to receive access and refresh tokens
+1. **Register** a new user at `POST /authentication/user`
+2. **Login** at `POST /authentication/login` to receive access and refresh tokens
 3. **Use access token** in the Authorization header: `Authorization: Bearer <access_token>`
-4. **Refresh token** when access token expires using `/authentication/token/refresh`
-5. **Logout** at `/authentication/logout` to invalidate tokens
+4. **Access user info** at `GET /authentication/user` or update with `PATCH /authentication/user`
+5. **Refresh token** when access token expires using `POST /authentication/token/refresh`
+6. **Logout** at `POST /authentication/logout` with refresh token to blacklist it
+
 
 ### [Ongoing]
 - 🚧 Frontend development in progress
@@ -265,3 +303,4 @@ Headers: Authorization: Bearer <access_token>
 ---
 
 ⭐ **Note**: This project is actively being developed. Star the repo to stay updated with new features!
+
