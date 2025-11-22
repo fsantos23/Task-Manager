@@ -1,4 +1,4 @@
-# Project Name
+# Task Manager
 
 > 🚧 **Status**: This project is currently under active development. The frontend is being built and features are being added regularly.
 
@@ -303,4 +303,5 @@ Headers: Authorization: Bearer <access_token>
 ---
 
 ⭐ **Note**: This project is actively being developed. Star the repo to stay updated with new features!
+
 
