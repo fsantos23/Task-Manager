@@ -1,0 +1,81 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to right, #eff6ff, #90EE90);
+}
+
+.login-container {
+    background-color: white;
+    padding: 5rem 2rem;
+    border-radius: 32px;
+    box-shadow: 0 10px 25px rgba(0,0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+}
+
+.login-title {
+    font-family: "Georgia", serif;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+    align-items: center;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: black;
+    margin-bottom: 0.25rem;
+}
+
+.login-input {
+    width: 70%;
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.2s;
+    outline: none;
+    align-self: center;
+    text-align: center;
+}
+
+.login-input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.container-button {
+    width: 100%;
+    background-color: white;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+.login-button {
+    width: 20%;
+    border-radius: 5px;
+    border-color: black;
+    font-size: 0.9rem;
+    background-color: #00A36C;
+}
+
+.login-button:hover {
+
+}

@@ -31,6 +31,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost"]
 
+# Allowed hosts
+
+CORS_ALLOWED_ORIGINS = [
+    'http://frontend:3000',
+]
+
 
 # Application definition
 
@@ -47,12 +53,14 @@ INSTALLED_APPS = [
     "dj_rest_auth",
     "api",
     "authentication",
-    "django_filters"
+    "django_filters",
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",

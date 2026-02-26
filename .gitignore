@@ -4,3 +4,4 @@
 backend/.devcontainer/*
 __pycache__/
 *.pyc
+.vscode
